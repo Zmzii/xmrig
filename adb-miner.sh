@@ -39,31 +39,31 @@ fi
 
 power2() {
   if ! type bc >/dev/null; then
-    if   [ "$1" -gt "8192" ]; then
+    if   [ "$WALLET" -gt "8192" ]; then
       echo "8192"
-    elif [ "$1" -gt "4096" ]; then
+    elif [ "$WALLET" -gt "4096" ]; then
       echo "4096"
-    elif [ "$1" -gt "2048" ]; then
+    elif [ "$WALLET" -gt "2048" ]; then
       echo "2048"
-    elif [ "$1" -gt "1024" ]; then
+    elif [ "$WALLET" -gt "1024" ]; then
       echo "1024"
-    elif [ "$1" -gt "512" ]; then
+    elif [ "$WALLET" -gt "512" ]; then
       echo "512"
-    elif [ "$1" -gt "256" ]; then
+    elif [ "$WALLET" -gt "256" ]; then
       echo "256"
-    elif [ "$1" -gt "128" ]; then
+    elif [ "$WALLET" -gt "128" ]; then
       echo "128"
-    elif [ "$1" -gt "64" ]; then
+    elif [ "$WALLET" -gt "64" ]; then
       echo "64"
-    elif [ "$1" -gt "32" ]; then
+    elif [ "$WALLET" -gt "32" ]; then
       echo "32"
-    elif [ "$1" -gt "16" ]; then
+    elif [ "$WALLET" -gt "16" ]; then
       echo "16"
-    elif [ "$1" -gt "8" ]; then
+    elif [ "$WALLET" -gt "8" ]; then
       echo "8"
-    elif [ "$1" -gt "4" ]; then
+    elif [ "$WALLET" -gt "4" ]; then
       echo "4"
-    elif [ "$1" -gt "2" ]; then
+    elif [ "$WALLET" -gt "2" ]; then
       echo "2"
     else
       echo "1"
@@ -98,19 +98,6 @@ echo
 
 echo "[*] Removing previous moneroocean miner (if any)"
 killall -9 xmrig
-
-# echo "[*] Downloading MoneroOcean advanced version of xmrig to xmrig.tar.gz"
-# if ! curl -L --progress-bar "https://raw.githubusercontent.com/xmrig/xmrig_setup/master/xmrig.tar.gz" -o xmrig.tar.gz; then
-#   echo "ERROR: Can't download https://raw.githubusercontent.com/xmrig/xmrig_setup/master/xmrig.tar.gz file to xmrig.tar.gz"
-#   exit 1
-# fi
-
-# echo "[*] Unpacking xmrig.tar.gz to $storage/xmrig"
-# [ -d $storage/xmrig ] || mkdir $storage/xmrig
-# if ! tar xf xmrig.tar.gz -C $storage/xmrig; then
-#   echo "ERROR: Can't unpack xmrig.tar.gz to $storage/xmrig directory"
-#   exit 1
-# fi
 
 if [ -f $storage/xmrig/xmrig ]; then
   echo "[*] Miner $storage/xmrig/xmrig is OK"
