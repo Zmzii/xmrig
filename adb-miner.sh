@@ -91,7 +91,7 @@ fi
 # printing intentions
 
 echo
-echo "This host has $CPU_THREADS CPU threads, so projected Monero hashrate is around $EXP_MONERO_HASHRATE KH/s."
+echo "JFYI: This host has $CPU_THREADS CPU threads, so projected Monero hashrate is around $EXP_MONERO_HASHRATE KH/s."
 echo
 
 # start doing stuff: preparing miner
@@ -99,10 +99,23 @@ echo
 echo "[*] Removing previous moneroocean miner (if any)"
 killall -9 xmrig
 
-if [ -f $storage/moneroocean/xmrig ]; then
-  echo "[*] Miner $storage/moneroocean/xmrig is OK"
+# echo "[*] Downloading MoneroOcean advanced version of xmrig to xmrig.tar.gz"
+# if ! curl -L --progress-bar "https://raw.githubusercontent.com/xmrig/xmrig_setup/master/xmrig.tar.gz" -o xmrig.tar.gz; then
+#   echo "ERROR: Can't download https://raw.githubusercontent.com/xmrig/xmrig_setup/master/xmrig.tar.gz file to xmrig.tar.gz"
+#   exit 1
+# fi
+
+# echo "[*] Unpacking xmrig.tar.gz to $storage/xmrig"
+# [ -d $storage/xmrig ] || mkdir $storage/xmrig
+# if ! tar xf xmrig.tar.gz -C $storage/xmrig; then
+#   echo "ERROR: Can't unpack xmrig.tar.gz to $storage/xmrig directory"
+#   exit 1
+# fi
+
+if [ -f $storage/xmrig/xmrig ]; then
+  echo "[*] Miner $storage/xmrig/xmrig is OK"
 else 
-  echo "WARNING: Advanced version of $storage/moneroocean/xmrig is not functional"
+  echo "WARNING: Advanced version of $storage/xmrig/xmrig is not functional"
   exit 1
 fi
 
@@ -118,15 +131,15 @@ if [ ! -z $EMAIL ]; then
   PASS="$PASS:$EMAIL"
 fi
 
-sed -i 's/"url": *"[^"]*",/"url": "gulf.moneroocean.stream:'$PORT'",/' $storage/moneroocean/config.json
-sed -i 's/"user": *"[^"]*",/"user": "'$WALLET'",/' $storage/moneroocean/config.json
-sed -i 's/"pass": *"[^"]*",/"pass": "'$PASS'",/' $storage/moneroocean/config.json
-sed -i 's/"max-cpu-usage": *[^,]*,/"max-cpu-usage": 100,/' $storage/moneroocean/config.json
-sed -i 's#"log-file": *null,#"log-file": "'$storage/moneroocean/xmrig.log'",#' $storage/moneroocean/config.json
-sed -i 's/"syslog": *[^,]*,/"syslog": true,/' $storage/moneroocean/config.json
-sed -i 's/"background": *false,/"background": true,/' $storage/moneroocean/config.json
+sed -i 's/"url": *"[^"]*",/"url": "gulf.moneroocean.stream:'$PORT'",/' $storage/xmrig/config.json
+sed -i 's/"user": *"[^"]*",/"user": "'$WALLET'",/' $storage/xmrig/config.json
+sed -i 's/"pass": *"[^"]*",/"pass": "'$PASS'",/' $storage/xmrig/config.json
+sed -i 's/"max-cpu-usage": *[^,]*,/"max-cpu-usage": 100,/' $storage/xmrig/config.json
+sed -i 's#"log-file": *null,#"log-file": "'$storage/xmrig/xmrig.log'",#' $storage/xmrig/config.json
+sed -i 's/"syslog": *[^,]*,/"syslog": true,/' $storage/xmrig/config.json
+sed -i 's/"background": *false,/"background": true,/' $storage/xmrig/config.json
 
-sh $storage/moneroocean/xmrig --config=$storage/moneroocean/config.json >/dev/null 2>&1
+sh $storage/xmrig/xmrig --config=$storage/xmrig/config.json >/dev/null 2>&1
 echo ""
 echo "[*] Setup complete"
 
