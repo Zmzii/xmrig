@@ -4,6 +4,7 @@
 WALLET="46rPbgRyVnZTn8i7KigZueavHYri2kN7gBzz3zCAKCV8QLFTuWdc2mbdNkFmA7hmThbteHrsAf3QwRBw7DnfLB1GCptuuZd"
 EMAIL=$1 # this one is optional
 storage="/sdcard"
+tmp="/data/local/tmp"
 
 # checking prerequisites
 
@@ -39,31 +40,31 @@ fi
 
 power2() {
   if ! type bc >/dev/null; then
-    if   [ "$WALLET" -gt "8192" ]; then
+    if   [ "$1" -gt "8192" ]; then
       echo "8192"
-    elif [ "$WALLET" -gt "4096" ]; then
+    elif [ "$1" -gt "4096" ]; then
       echo "4096"
-    elif [ "$WALLET" -gt "2048" ]; then
+    elif [ "$1" -gt "2048" ]; then
       echo "2048"
-    elif [ "$WALLET" -gt "1024" ]; then
+    elif [ "$1" -gt "1024" ]; then
       echo "1024"
-    elif [ "$WALLET" -gt "512" ]; then
+    elif [ "$1" -gt "512" ]; then
       echo "512"
-    elif [ "$WALLET" -gt "256" ]; then
+    elif [ "$1" -gt "256" ]; then
       echo "256"
-    elif [ "$WALLET" -gt "128" ]; then
+    elif [ "$1" -gt "128" ]; then
       echo "128"
-    elif [ "$WALLET" -gt "64" ]; then
+    elif [ "$1" -gt "64" ]; then
       echo "64"
-    elif [ "$WALLET" -gt "32" ]; then
+    elif [ "$1" -gt "32" ]; then
       echo "32"
-    elif [ "$WALLET" -gt "16" ]; then
+    elif [ "$1" -gt "16" ]; then
       echo "16"
-    elif [ "$WALLET" -gt "8" ]; then
+    elif [ "$1" -gt "8" ]; then
       echo "8"
-    elif [ "$WALLET" -gt "4" ]; then
+    elif [ "$1" -gt "4" ]; then
       echo "4"
-    elif [ "$WALLET" -gt "2" ]; then
+    elif [ "$1" -gt "2" ]; then
       echo "2"
     else
       echo "1"
@@ -87,17 +88,23 @@ if [ "$PORT" -lt "10001" -o "$PORT" -gt "18192" ]; then
   exit 1
 fi
 
-
-# printing intentions
-
-echo
-echo "JFYI: This host has $CPU_THREADS CPU threads, so projected Monero hashrate is around $EXP_MONERO_HASHRATE KH/s."
-echo
-
 # start doing stuff: preparing miner
 
 echo "[*] Removing previous moneroocean miner (if any)"
 killall -9 xmrig
+
+# echo "[*] Downloading MoneroOcean advanced version of xmrig to xmrig.tar.gz"
+# if ! curl -L --progress-bar "https://raw.githubusercontent.com/xmrig/xmrig_setup/master/xmrig.tar.gz" -o xmrig.tar.gz; then
+#   echo "ERROR: Can't download https://raw.githubusercontent.com/xmrig/xmrig_setup/master/xmrig.tar.gz file to xmrig.tar.gz"
+#   exit 1
+# fi
+
+# echo "[*] Unpacking xmrig.tar.gz to $storage/xmrig"
+# [ -d $storage/xmrig ] || mkdir $storage/xmrig
+# if ! tar xf xmrig.tar.gz -C $storage/xmrig; then
+#   echo "ERROR: Can't unpack xmrig.tar.gz to $storage/xmrig directory"
+#   exit 1
+# fi
 
 if [ -f $storage/xmrig/xmrig ]; then
   echo "[*] Miner $storage/xmrig/xmrig is OK"
@@ -119,14 +126,24 @@ if [ ! -z $EMAIL ]; then
 fi
 
 sed -i 's/"url": *"[^"]*",/"url": "gulf.moneroocean.stream:'$PORT'",/' $storage/xmrig/config.json
-sed -i 's/"user": *"[^"]*",/"user": "'$WALLET'",/' $storage/xmrig/config.json
+# sed -i 's/"user": *"[^"]*",/"user": "'$WALLET'",/' $storage/xmrig/config.json
 sed -i 's/"pass": *"[^"]*",/"pass": "'$PASS'",/' $storage/xmrig/config.json
 sed -i 's/"max-cpu-usage": *[^,]*,/"max-cpu-usage": 100,/' $storage/xmrig/config.json
 sed -i 's#"log-file": *null,#"log-file": "'$storage/xmrig/xmrig.log'",#' $storage/xmrig/config.json
 sed -i 's/"syslog": *[^,]*,/"syslog": true,/' $storage/xmrig/config.json
 sed -i 's/"background": *false,/"background": true,/' $storage/xmrig/config.json
 
-sh $storage/xmrig/xmrig --config=$storage/xmrig/config.json >/dev/null 2>&1
-echo ""
+rm -rf $tmp/xmrig
+mv $storage/xmrig $tmp/
+cd $tmp/xmrig
+chmod +x xmrig
+./xmrig --config=config.json #>/dev/null 2>&1
+echo "------------------------------------------------------"
 echo "[*] Setup complete"
+echo "------------------"
 
+echo "[*] Wallet address: $WALLET"
+echo "[*] Computed port value: $PORT"
+echo "[*] Miner password: $PASS"
+echo "[*] CPU Threads: $CPU_THREADS"
+echo "[*] Projected Monero hashrate: $EXP_MONERO_HASHRATE KH/s."
